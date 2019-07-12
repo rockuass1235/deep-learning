@@ -20,3 +20,4 @@ def show_data(images, labels):
         f.axes.get_yaxis().set_visible(False)
     plt.show()
 ```
+![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/mnist.PNG)
