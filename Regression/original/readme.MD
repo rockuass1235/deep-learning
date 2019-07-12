@@ -5,6 +5,7 @@
 
 <h1>讀取數據</h1>
 在訓練模型的時候，我們需要遍歷數據集並不斷讀取小批量數據樣本。這裡我們定義一個函數：它每次返回batch_size（批量大小）個隨機樣本的特徵和標籤。<br>
+
 ```Python
 def data_iter(X, Y, batch_size):
 
@@ -15,7 +16,6 @@ def data_iter(X, Y, batch_size):
     for i in range(0, n, batch_size):
         j = nd.array(indices[i:i+batch_size])
         yield X.take(j), Y.take(j)
-
 ```
 
 
@@ -24,6 +24,7 @@ def data_iter(X, Y, batch_size):
 顧名思義，線性回歸假設輸出與各個輸入之間是線性關係：<br>
 
 ##nd.dot(X,W) + b<br>
+
 ```Python
 class Layer(object):
 
