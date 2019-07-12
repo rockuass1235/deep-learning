@@ -122,6 +122,8 @@ def get_k_fold_data(k, i, x, y):
     return train_x, train_y, valid_x, valid_y
 
 ```
+
+##	結果
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold1.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold2.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold3.png)
