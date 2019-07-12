@@ -85,9 +85,30 @@ def l2loss(yhat, y):
         param[:] = param - lr/batch_size * param.grad
         
 ```
+<h1>訓練模型</h1>
+在訓練中，我們將多次迭代模型參數。在每次迭代中，我們根據當前讀取的小批量數據樣本（特徵X和標籤y），通過調用反向函數backward計算小批量隨機梯度，並調用優化算法sgd迭代模型參數。由於我們之前設批量大小batch_size
+
+ ```Python
+def train(epochs, lr, batch_size, net, X, Y, loss):
+
+    for e in range(epochs):
+
+        total_loss = 0
+        start = time.time()
+        for x, y in data_iter(X, Y, batch_size):
+            with autograd.record():
+                yhat = net(x)
+                l = loss(yhat, y)
+            l.backward()
+            sgd(net.all_params(), lr, batch_size)
+            total_loss += l.sum().asscalar()
+
+        print('epoch: %d, loss: %f, time: %f sec' %(e+1, total_loss/len(Y), time.time()-start))
+```
 
 <h1>模型預測</h1>
 模型訓練完成後，這裡我們得到的並不一定是最小化損失函數的最優解 w∗1,w∗2,b∗ ，而是對最優解的一個近似。然後，我們就可以使用學出的線性回歸模型 x1w^1+x2w^2+b^ 來估算訓練數據集以外任意一棟面積（平方米）為 x1 、房齡（年）為 x2 的房屋的價格了。這裡的估算也叫作模型預測、模型推斷或模型測試。<br>
+訓練完成後，我們可以比較學到的參數和用來生成訓練集的真實參數。它們應該很接近。
 
 
 
