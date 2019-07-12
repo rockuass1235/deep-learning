@@ -20,7 +20,7 @@ def show_data(images, labels):
         f.axes.get_yaxis().set_visible(False)
     plt.show()
 ```
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/mnist.PNG)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/mnist.PNG)
 
 #   資料預處理
 了解數據不是數據科學中最困難的事情，但這的確是一件非常耗時的事情。很多人可能會忽略這一步驟，就直接下水了。
@@ -44,18 +44,18 @@ def show_data(images, labels):
 為了消除特徵數據之間的量綱影響，需要進行歸一化處理，以解決特徵指標之間的可比性。原始數據經過歸一化處理後，各指標處於同一數量級，以便進行綜合對比評價。
 
 ###  如何選擇適合的縮放方法
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/normalize.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/normalize.png)
 
 數據normalize or standardize後，最優解的尋優過程明顯會變得平緩，更容易正確   的收斂到最優解。
 #####   未歸一化求導
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/nonormal.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/nonormal.png)
 #####   歸一化求導
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/normal.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/normal.png)
 #   WHY
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/%E5%9C%96%E7%89%871.png)
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/%E5%9C%96%E7%89%872.png)
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/%E5%9C%96%E7%89%873.png)
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/%E5%9C%96%E7%89%874.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%871.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%872.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%873.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%874.png)
 ##  程式碼
 #### 資料缺失處理(NA)
 對於缺失的特徵值，我們將其替換成該特徵的均值。<br>
@@ -64,7 +64,7 @@ data = data.fillna(data.mean())
 #### Label Encoding & One-Hot Encoding
 Label encoding在某些情況下很有用，但是場景限制很多。比如有一列[dog,cat,dog,mouse,cat]，我們把其轉換為[1,2,1,3,2]。這裡就產生了一個奇怪的現象：dog和mouse的平均值是cat。
 One-Hot編碼，又稱為一位有效編碼，主要是採用位狀態寄存器來對個狀態進行編碼，每個狀態都由他獨立的寄存器位，並且在任意時候只有一位有效。
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/onehot.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/onehot.png)
 #### 為什麼使用one-hot編碼來處理離散型特徵?
 
 1. 使用one-hot編碼，將離散特徵的取值擴展到了歐式空間，離散特徵的某個取值就對應歐式空間的某個點。
@@ -122,9 +122,9 @@ def get_k_fold_data(k, i, x, y):
     return train_x, train_y, valid_x, valid_y
 
 ```
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/fold1.png)
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/fold2.png)
-![image](https://github.com/rockuass1235/deep-learning/blob/master/MNIST/images/fold3.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold1.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold2.png)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold3.png)
 
 #   建立模型
 ```Python
