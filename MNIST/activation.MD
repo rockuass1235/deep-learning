@@ -29,7 +29,8 @@
 
 ### Sigmoid
 
-![image]()
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sigmoid.png)<br>
+
 傳統神經網絡中最常用的兩個激活函數，Sigmoid系（Logistic-Sigmoid、Tanh-Sigmoid）被視為神經網絡的核心所在。<br>
 
 從數學上來看，**非線性的Sigmoid函數對中央區的信號增益較大，對兩側區的信號增益小**，在信號的特徵空間映射上，有很好的效果。<br>
@@ -53,6 +54,6 @@ Sigmoid函數在深度網絡中常常會導致導數逐漸變為0，使得參數
 
 #### 輸出不是zero-centered
 Sigmoid函數的輸出值恆大於0，這會導致模型訓練的收斂速度變慢。舉例來講下圖紅色箭頭所示的階梯式更新，這顯然並非一個好的優化路徑。深度學習往往需要大量時間來處理大量數據，模型的收斂速度是尤為重要的。所以，總體上來講，訓練深度學習網絡盡量使用zero-centered數據(可以經過數據預處理實現)和zero-centered輸出。
-
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/zero_center.jpg)
 #### 冪運算相對耗時
 相對於前兩項，這其實並不是一個大問題，我們目前是具備相應計算能力的，但面對深度學習中龐大的計算量，最好是能省則省:-)。之後我們會看到，在ReLU函數中，需要做的僅僅是一個thresholding，相對於冪運算來講會快很多。
