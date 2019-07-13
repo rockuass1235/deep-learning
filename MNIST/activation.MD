@@ -1,6 +1,7 @@
 # 深度學習的activation function
 
-<font color=#DC143C>優先使用ReLU (Rectified Linear Unit) 函數作為神經元的activation function</font>
+
+**優先使用ReLU (Rectified Linear Unit) 函數作為神經元的activation function**
 
 ## 理論
 
