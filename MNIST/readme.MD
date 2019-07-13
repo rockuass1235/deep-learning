@@ -139,17 +139,20 @@ net.initialize(init = init.Xavier())
 
 ## trainning 
 time: per epoch
+```Python
 epoch: 1, loss: 0.983353, time: 2.969895 sec
 epoch: 10, loss: 0.189371, time: 3.080267 sec
 epoch: 20, loss: 0.120508, time: 3.115975 sec
 epoch: 30, loss: 0.086041, time: 3.257145 sec
 epoch: 40, loss: 0.064918, time: 3.309876 sec
 epoch: 50, loss: 0.050059, time: 3.131683 sec
-
+```
 ## predict
 
-test dataset = 10000
+
+test dataset = 10000<br>
 accuracy:  0.974
+```Python
 [1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -176,3 +179,4 @@ accuracy:  0.974
  1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1
  1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
 <NDArray 256 @cpu(0)>
+```
