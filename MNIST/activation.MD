@@ -93,3 +93,12 @@ ReLU也有幾個需要特別注意的問題：
 
 儘管存在這兩個問題，ReLU目前仍是最常用的activation function，在搭建人工神經網絡的時候推薦優先嘗試！
 
+### ELU (Exponential Linear Units) 函數
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/elu.png)
+
+ELU也是為解決ReLU存在的問題而提出，顯然，ELU有ReLU的基本所有優點，以及：
+
+* 不會有Dead ReLU問題
+* 輸出的均值接近0，zero-centered
+
+它的一個小問題在於計算量稍大。類似於Leaky ReLU，理論上雖然好於ReLU，但在實際使用中目前並沒有好的證據ELU總是優於ReLU。
