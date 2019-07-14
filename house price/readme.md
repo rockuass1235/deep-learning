@@ -10,7 +10,7 @@ https://www.kaggle.com/
 
 我們可以在房價預測比賽的網頁上了解比賽信息和參賽者成績，也可以下載數據集並提交自己的預測結果。
 
-該比賽的網頁地址是 https://www.kaggle.com/c/house-prices-advanced-regression-techniques。
+該比賽的網頁地址是 https://www.kaggle.com/c/house-prices-advanced-regression-techniques
 
 
 
