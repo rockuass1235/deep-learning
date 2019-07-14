@@ -48,6 +48,14 @@ https://www.kaggle.com/
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%872.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%873.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/%E5%9C%96%E7%89%874.png)
+
+所以資料的縮放我們到底得到什麼? 
+# **縮放後讓資料更均勻的分佈在空間中，以利於我們進行後續分類動作**  
+
+不管資料太稀疏或者太密集，都不利於我們找出一條線進行分類，或可以換個角度思考，如果資料沒有經過線性轉換，每一維的特徵向量無法處於一致的度量單位。
+
+資料資間的關係也無從比較起。
+
 ##  程式碼
 #### 資料缺失處理(NA)
 對於缺失的特徵值，我們將其替換成該特徵的均值。<br>
