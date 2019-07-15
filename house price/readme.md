@@ -132,7 +132,7 @@ trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': lr, 'wd'
 
 我們一樣使用l2loss 作為loss function
 
-對嫆比賽要求的cost function 我們可以選擇測試集的時候再使用作為評估。
+對比賽要求的cost function 我們可以選擇測試集的時候再使用作為評估。
 
 下面定義比賽用來評價模型的對數均方根誤差。對數均方根誤差的實現如下。
 
