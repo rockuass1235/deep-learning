@@ -25,5 +25,11 @@
 
 再執行卷積時，特徵圖的大小就會變成6x6
 
-所以我們得到以下公式: ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/padding_formula.jpg)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/conv_pad.svg)
+
+所以我們得到以下公式:　　![image](https://github.com/rockuass1235/deep-learning/blob/master/images/padding_formula.jpg)
+
+如果我們希望影像大小經過卷積核處理後大小不變，在擴充的寬度(padding)應該滿足下面的方程，其中p 是padding（填充），f 是卷積核的維度（通常是奇數）。
+
+
 
