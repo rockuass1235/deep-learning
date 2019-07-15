@@ -27,9 +27,39 @@
 
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/conv_pad.svg)
 
+圖像為padding示意圖，在周圍補0不影響類神經網路訓練(疊加0)
+
 所以我們得到以下公式:　　![image](https://github.com/rockuass1235/deep-learning/blob/master/images/padding_formula.jpg)
 
 如果我們希望影像大小經過卷積核處理後大小不變，在擴充的寬度(padding)應該滿足下面的方程，其中p 是padding（填充），f 是卷積核的維度（通常是奇數）。
 
+
+# Stride
+
+在之前的例子中，我們總是將捲積核移動一個像素。但是，步長也可以看做是卷積層的一個參數。我們可以看到，如果我們使用更大的步長，卷積會成為什麼樣子。
+
+在設計CNN 結構時，如果我們想降低輸出矩陣大小，那麼我們可以決定增大步長。考慮到擴充(p)和跨步(s)，輸出矩陣的大小可以使用下面的公式計算：
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/stride_formula.jpg)
+
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/stride.gif)
+
+
+所以我們歸納以下結論:
+
+* 填充可以增加輸出的高和寬。這常用來使輸出與輸入具有相同的高和寬。
+* 步幅可以減小輸出的高和寬，例如輸出的高和寬僅為輸入的高和寬的 1/n （ n 為大於1的整數）。
+
+注: 在步幅的使用中，目前多以Max pooling 來進行縮小尺寸
+
+
+# 原文出處
+
+https://zhuanlan.zhihu.com/p/63220482
+
+https://zhuanlan.zhihu.com/p/30994790
+
+https://zh.gluon.ai
 
 
