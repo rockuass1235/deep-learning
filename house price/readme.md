@@ -47,14 +47,25 @@ features[num_idx] = features[num_idx].apply(lambda x: (x - x.mean()) / (x.std())
 features[num_idx] = features[num_idx].fillna(0)
 ```
 
-在處理完數值型資料後，我們接著處理文字型資料。我們將文字換成one-hot 離散型特徵值
-EX:
-|環境類型|房頂類型|地下室|
-|---|---|---|
-|郊區|鐵皮|無|
-|小鎮|歐式|有|
+在處理完數值型資料後，我們接著處理文字型資料。我們將文字換成one-hot 離散型特徵值，可以看到這一步轉換將特徵數從79增加到了331。
 
-#   K-fold交叉驗證
+```Python
+features = pd.get_dummies(features, dummy_na=True)
+```
+
+最後，通過values屬性得到NumPy格式的數據，並轉成NDArray方便後面的訓練。
+
+```Python
+n_train = train_data.shape[0]
+train_features = nd.array(features[:n_train].values)
+test_features = nd.array(features[n_train:].values)
+train_labels = nd.array(train_data.SalePrice.values).reshape((-1, 1))
+train_iter = gdata.DataLoader(gdata.ArrayDataset(train_features, train_labels), batch_size, shuffle=True)
+```
+
+
+
+##   K-fold交叉驗證
 
 在K-fold交叉驗證中我們訓練K次並返回訓練和驗證的平均誤差。
 其作法:
@@ -88,3 +99,48 @@ def get_k_fold_data(k, i, x, y):
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold1.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold2.png)
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fold3.png)
+
+
+## Model
+
+對於房價預測來說，是一個很簡單的回歸問題，甚至可以使用K-nearest neighbor來進行分類
+
+利用簡單的3-layer-MLP即可達到一個良好的分類結果。為了避免區域極值問題使用Xavier進行初始化
+
+```Python
+
+net = nn.Sequential()
+with net.name_scope():
+    net.add(nn.Dense(256, activation= 'tanh'))
+    net.add(nn.Dense(128, activation= 'tanh'))
+    net.add(nn.Dense(1))
+net.initialize(init = init.Xavier())
+```
+
+## Loss & Weight update
+
+learning rate 我們設0.03，一個學習率超參數設定值的好壞對於訓練結果影響很大。 這裡使用adam的演算法取代sgd，降低 訓練結果對learning rate的敏感度
+
+```Python
+lr = 0.03
+decay = 0.001
+trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': lr, 'wd': decay})
+
+```
+
+## loss
+
+我們一樣使用l2loss 作為loss function
+
+對嫆比賽要求的cost function 我們可以選擇測試集的時候再使用作為評估。
+
+下面定義比賽用來評價模型的對數均方根誤差。對數均方根誤差的實現如下。
+
+```Python
+
+def log_rmse(yhat, y):
+    yhat = nd.clip(yhat, 1, float('inf'))  # 將數值小於1的值設為1 ，讓log值介於0-inf之間增加穩定性
+    rmse = nd.sqrt(2 * loss(yhat.log(), y.log()).mean())
+    return rmse.asscalar()
+```
+
