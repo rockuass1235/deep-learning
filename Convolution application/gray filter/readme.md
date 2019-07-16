@@ -74,7 +74,7 @@ plt.show()
 
 
 
-#原文出處
+# 原文出處
 
 http://atlaboratary.blogspot.com/2013/08/rgb-g-rey-l-gray-r0.html
 
