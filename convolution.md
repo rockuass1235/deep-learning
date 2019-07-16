@@ -117,12 +117,14 @@
  
  我們可以這麼認為，卷積的過程是勾勒圖片最小單元（特徵）的過程。其輸出值越大，表示該位置越貼近濾波器所代表的特徵。而MaxPooling的過程實在降低特徵在圖像位置上的精確程度。表示的是在該片區域存在該特徵。
  
+ ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/max_pool.gif)
  
  ## 從信號傳輸的角度來看的話，maxpooling是相當於把有用的信息過濾之後輸出，而minpooling是把信號中夾雜的噪聲作為輸出， average pooling則是把信號模糊化。
 
 
+題外話: Max pooling 到底是如何實現反向傳播呢? 實際上，這是通過創建一個Mask來完成的，這個Mask記住了前一階段數值的位置，我們可以在後面轉移梯度的時候用到。
 
-
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/max_pool_back.gif)
 
 # 原文出處
 
