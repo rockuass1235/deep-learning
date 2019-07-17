@@ -81,7 +81,7 @@ plt.show()
 
 ### 原圖
 
-![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sudoku_original.jpg)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sudoku-original.jpg)
 
 ### AdaptiveThreshold
 
