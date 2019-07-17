@@ -15,6 +15,8 @@
 
 ### 平均值 卷積核
 
+r = 卷積核大小的平方
+
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/avg_kernal.png)
 
 ### 原始-平均值
@@ -79,7 +81,7 @@ plt.show()
 
 ### 原圖
 
-![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sukodu_original.jpg)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sudoku_original.jpg)
 
 ### AdaptiveThreshold
 
