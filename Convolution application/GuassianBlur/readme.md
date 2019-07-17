@@ -1,8 +1,9 @@
 # 模糊化 Blur
 
-所謂”模糊”，可以理解成每一個像素都取周邊像素的平均值。
+所謂”模糊”，可以理解成每一個像素都取周邊像素的平均值， 而模糊化最主要的目的是為了降低噪訊的干擾。 當像素點取平均後，噪訊的資訊量會被周圍像素拉低。
 
 中間點取周圍點的平均值，在數值上，這是一種 ** 平滑化 ** 。在圖形上，就相當於產生模糊效果，中間點失去細節。 計算平均值時，取值範圍越大，模糊效果越強烈。
+
 
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/avg_blur.png)
 
@@ -92,6 +93,37 @@ class GuassianFilter(nn.Block):
             return yhat.transpose((1,2,0))
 ```
 
+# 使用方式
+
+```Python
+net = nn.Sequential()
+net.add(gray.GrayFilter())
+net.add(ga.GuassianFilter(7, 1))
+net.add(adp.AdaptiveThreshold(size=13))
+
+for layer in net:
+    layer.initialize()
+
+X = image.imread('lena.jpg')
+yhat = net(X)
+yhat = yhat.astype('uint8')
+
+
+plt.imshow(yhat.asnumpy(), plt.cm.gray)
+plt.show()
+
+```
+
+
+# 結果
+
+### Before
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/before_blur.png)
+
+### After
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/after_blur.png)
 
 # 原文出處
 
