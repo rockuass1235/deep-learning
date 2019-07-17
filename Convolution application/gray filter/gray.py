@@ -1,6 +1,6 @@
-from mxnet import nd, image
+from mxnet import nd
 from mxnet.gluon import nn
-import matplotlib.pyplot as plt
+
 
 
 class GrayFilter(nn.Block):
@@ -29,15 +29,6 @@ class GrayFilter(nn.Block):
         return x.reshape((shape[0], shape[1]))
 
 
-net = GrayFilter()
-net.initialize()
-
-X = image.imread('lena.jpg')
-yhat = net(X)
-yhat = yhat.astype('uint8')
-
-plt.imshow(yhat.asnumpy(), plt.cm.gray)
-plt.show()
 
 
 

@@ -1,6 +1,6 @@
-from mxnet import nd, image
+from mxnet import nd
 from mxnet.gluon import nn
-import matplotlib.pyplot as plt
+
 
 
 class GrayFilter(nn.Block):
