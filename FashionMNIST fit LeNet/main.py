@@ -9,7 +9,7 @@ def get_fashion_mnist_labels(labels):
     return [text_labels[int(i)] for i in labels]
 
 
-def train(epochs, batch_size, lr, wd, loss, trainer, train_data, transformer):
+def train(epochs, batch_size, net, loss, trainer, train_data, transformer):
     train_iter = gdata.DataLoader(train_data.transform_first(transformer), batch_size=batch_size, shuffle=True)
     for e in range(epochs):
 
@@ -32,7 +32,7 @@ train_data = gdata.vision.FashionMNIST(train=True)
 test_data = gdata.vision.FashionMNIST(train=False)
 
 transformer = gdata.vision.transforms.ToTensor()
-net = le.LeNet()
+net = le.LeNet(10)
 net.initialize(init.Xavier())
 
 epochs = 5*20
@@ -44,7 +44,7 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate':lr, 'wd': 
 
 
 net.load_parameters('lenet.params')
-train(epochs, batch_size, lr, wd, loss, trainer, train_data,transformer)
+train(epochs, batch_size, net, loss, trainer, train_data,transformer)
 net.save_parameters('lenet.params')
 
 

@@ -1,6 +1,6 @@
 from mxnet.gluon import nn
 
-def LeNet():
+def LeNet(out):
 
     net = nn.Sequential()
     with net.name_scope():
@@ -11,7 +11,7 @@ def LeNet():
         net.add(nn.Flatten())
         net.add(nn.Dense(120, activation='tanh'))
         net.add(nn.Dense(84, activation='tanh'))
-        net.add(nn.Dense(10))
+        net.add(nn.Dense(out))
 
     return net
 print(LeNet())

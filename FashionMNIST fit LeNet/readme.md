@@ -25,7 +25,7 @@ LeNet 由Yann LeCun於1998年提出，CNN核心架構即源自這篇paper，主�
 
 ```Python
 
-def LeNet():
+def LeNet(out):
 
     net = nn.Sequential()
     with net.name_scope():
@@ -36,7 +36,7 @@ def LeNet():
         net.add(nn.Flatten())
         net.add(nn.Dense(120, activation='tanh'))
         net.add(nn.Dense(84, activation='tanh'))
-        net.add(nn.Dense(10))
+        net.add(nn.Dense(out))
 
     return net
 	
@@ -57,7 +57,7 @@ def LeNet():
 
 ```Python
 
-def train(epochs, batch_size, lr, wd, loss, trainer, train_data, transformer):
+def train(epochs, batch_size, net, loss, trainer, train_data, transformer):
     train_iter = gdata.DataLoader(train_data.transform_first(transformer), batch_size=batch_size, shuffle=True)
     for e in range(epochs):
 
@@ -73,7 +73,6 @@ def train(epochs, batch_size, lr, wd, loss, trainer, train_data, transformer):
             total_loss += l.sum().asscalar()
 
         print('epoch: %d, loss: %f, time: %f sec' % (e + 1, total_loss / len(train_data), time.time() - start))
-
 
 
 train_data = gdata.vision.FashionMNIST(train=True)
@@ -92,7 +91,7 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate':lr, 'wd': 
 
 
 net.load_parameters('lenet.params')  #若第一次執行請註解此行
-train(epochs, batch_size, lr, wd, loss, trainer, train_data,transformer)
+train(epochs, batch_size, net, loss, trainer, train_data,transformer)
 net.save_parameters('lenet.params')
 
 ```
