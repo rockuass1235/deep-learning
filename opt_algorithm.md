@@ -25,7 +25,7 @@
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/opt_critical.svg)
 
 
-# gradient descent 梯度下降法(GD)
+# 梯度下降（gradient descent，GD)
 
 我們都知道在一階導數為0的地方會有極值或奇異點存在，這也是設計loss function 而不是直接使用 accuracy function的原因之一。 
 
@@ -33,19 +33,52 @@
 
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/fun.png)
 
+## 證明
+
 給定絕對值足夠小的數 ϵ ，根據泰勒展開公式，我們也可以得到以下的近似：
 
 <h1>f(x+ϵ)≈f(x)+ϵf′(x).</h1>
 
+若 ϵ = −ηf′(x) 帶入回得到以下公式:
+
+<h1>f(x−ηf′(x))≈f(x)−ηf′(x)^2.</h1>
+
+已知 f′(x)^2 > 0 所以:
+<h1>f(x−ηf′(x))≲f(x).</h1>
+
+得證 當x 沿著梯度(斜率)反方向移動，會讓目標函數值越小。 當x的維度 > 1 上面的證明依然成立
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sgd.svg)
+
+
+### learning rate
+
+上面公式的 η 通常叫作學習率。這是一個超參數，需要人工設定。如果使用過小的學習率，會導致 x 更新緩慢從而需要更多的迭代才能得到較好的解或者掉入local minimum中。
+
+如果使用過大的學習率， |ηf′(x)| 可能會過大從而使前面提到的一階泰勒展開公式不再成立：這時我們無法保證迭代 x←x−ηf′(x) 會降低 f(x) 的值。
 
 
 
+# 隨機梯度下降（stochastic gradient descent，SGD)
+
+在深度學習裡，目標函數通常是訓練數據集中有關各個樣本的損失函數的平均。若數據集的大小為n，我們需要計算n筆資料取平均後才計算梯度。
+
+假設n是一個天文數字(訓練資料通常都百萬起跳)，GD 需要進行n(百萬)次計算後才進行一次權重更新，無疑是非常沉重的成本。
+
+為了加速權重更新的速度， 在統計學有一個概念，在母體中隨機抽樣產生的子樣本，子樣本的行為模式與原母體行為差異屬於無偏估計。
+
+也就是我們可以設定一個batch size大小進行抽樣產生子樣本，子樣本所估計出來的梯度近似於用母體所估計出來的梯度。如此一來在每個batch size後，我們就能直接進行權重更新，增加更新頻率。
 
 
 
+### 計算母體梯度更新
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sgd_all.svg)
 
 
+### 計算批次樣本梯度更新
 
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sgd_batch.svg)
 
 
 
