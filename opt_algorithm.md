@@ -69,7 +69,12 @@
 
 也就是我們可以設定一個batch size大小進行抽樣產生子樣本，子樣本所估計出來的梯度近似於用母體所估計出來的梯度。如此一來在每個batch size後，我們就能直接進行權重更新，增加更新頻率。
 
+```Python 
 
+lr = 0.03
+trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr})
+
+```
 
 ### 計算母體梯度更新
 
@@ -82,6 +87,45 @@
 
 
 
+
+# 動量法(Momentum)
+
+隨機梯度下降法(SGD)，是不敗的經典。即使在推出如此多的優化演算法，研究學者的論文大多數還是主要採用SGD做為優化演算法，然而SGD有一些問題很難克服:
+
+### 落入local minimum:
+
+在某些情況如果學習率太小，先不題訓練緩慢的問題，它有可能找不到真正的global minimum，而學習率設太大有可能導致無法收斂。
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/sgd_err1.png)
+
+### 每個分量的斜率大小不一致:
+
+假設資料X維度2維，可以看到，同一位置上，目標函數在豎直方向（ x2 軸方向）比在水平方向（ x1 軸方向）的斜率的絕對值更大。
+
+因此，給定學習率太小， 有可能導致x1訓練緩慢甚至落入local minimum; 給定學習率太大，x2會無法收斂
+
+
+### Solution
+
+動量法主要就是為了解決這個問題，降低對學習率的依賴。
+
+原本變化 x←x−ηf′(x) 修正為: 
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/mom_formula.png)
+
+動量超參數 γ 滿足 0≤γ<1 。當 γ=0 時，動量法等價於小批量隨機梯度下降。
+
+
+
+
+
+
+```Python 
+
+mom = 0.9
+trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr, 'momentum':mom})
+
+```
 
 
 
