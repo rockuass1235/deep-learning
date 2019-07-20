@@ -176,8 +176,20 @@ net.save_parameters('TinyAlex.params')
 
 ```Python
 
-train_data = gdata.vision.CIFAR10(train=True)
-test_data = gdata.vision.CIFAR10(train=False)
+
+epochs = 5*20
+lr = 0.01
+wd = 0.001
+batch_size = 256
+loss = gloss.SoftmaxCrossEntropyLoss()
+mom = 0.9
+trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': mom})
+
+
+epoch: 99, loss: 0.119308, time: 164.769763 sec
+epoch: 100, loss: 0.122036, time: 164.148637 sec
+acc:  0.7264
+
 
 ```
 

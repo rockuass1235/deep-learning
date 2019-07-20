@@ -104,6 +104,8 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr})
 
 因此，給定學習率太小， 有可能導致x1訓練緩慢甚至落入local minimum; 給定學習率太大，x2會無法收斂
 
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/mom_test.svg)
+
 
 ### Solution
 
@@ -115,6 +117,12 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr})
 
 動量超參數 γ 滿足 0≤γ<1 。當 γ=0 時，動量法等價於小批量隨機梯度下降。
 
+
+我們可以看到如下圖:
+
+當 學習率x斜率 很大時，v(動量)值反而因為反覆震盪而不會有所增長，動量超參數 γ讓其逐漸收斂; 
+
+當 學習率x斜率 很小時，v(動量)值會同向疊加越來越大，加速收斂甚至給予其足夠動量離開 local minimum。
 
 
 
