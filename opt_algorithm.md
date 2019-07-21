@@ -179,6 +179,62 @@ trainer = gluon.Trainer(net.collect_params(), 'rmsprop', {'learning_rate': lr, '
 							
 ```
 
+
+# Adam
+
+該算法名為「Adam」，其並不是首字母縮寫，也不是人名。它的名稱來源於適應性矩估計（adaptive moment estimation）。
+
+原論文列舉了將Adam 優化算法應用在非凸優化問題中所獲得的優勢：
+
+* 直截了當地實現高效的計算所需內存少梯度對角縮放的不變性（第二部分將給予證明） 適合解決含大規模數據和參數的優化問題適用於非穩態（non-stationary）目標
+
+* 適用於解決包含很高噪聲或稀疏梯度的問題超參數可以很直觀地解釋，並且基本上只需極少量的調參
+
+同樣在CS231n 課程中，Adam 算法也推薦作為默認的優化算法。
+
+
+公式如下:
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/adam_formula.png)
+
+
+這裡對1階導數與2階導數都進行了指數加權移動平均，那什麼是指數加權平均?
+
+
+指數移動平均（英語：exponential moving average，EMA或EWMA）是以指數式遞減加權的移動平均。各數值的加權影響力隨時間而指數式遞減，越近期的數據加權影響力越重，但較舊的數據也給予一定的加權值。
+
+加權的程度以常數α決定，α數值介乎0至1。
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/ewma.png)
+
+
+該算法是目前最重要的算法之一。從金融時間序列、信號處理到神經網絡，其應用非常廣泛。基本上所有的數據都是有序的。
+
+我們主要使用此算法來減少噪音時間序列數據中的噪音。我們使用的術語是「smoothing」數據。
+
+公式如下:
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/ewma_formula.jpg)
+
+
+公式指出，t時刻的移動平均值(S)的值是t時刻原始信號(x)的值與移動平均本身的前值(即t-1)的混合。混合程度由參數a(0-1之間的值)控制。
+
+所以，如果a = 10％（小），則大部分貢獻將來自信號的先前值。在這種情況下，「 smoothing 」將非常大。
+
+如果a = 90％（大），則大部分貢獻將來自信號的當前值。在這種情況下，「smoothing 」將是小的。
+
+
+### a = 0.1 進行EWMA
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/ewma_smaple.jpg)
+
+
+實際上 a 值也有一些實際的意義， 從數學上可以得知(1-1/n)^n = exp(-1) = 0.3679。假設exxp(-1)是很小的值，代表加權指數平均到某一定值以後可以視同0忽略不計
+
+一般這個值 = 1/(1-a)， 假設a = 0.9，得到的值其實就是10輪的加權指數平均，離當前時間越近的值獲得的權重越大
+
+
+
 # 原文出處
 
 http://zh.gluon.ai/chapter_optimization/optimization-intro.html
@@ -186,6 +242,14 @@ http://zh.gluon.ai/chapter_optimization/optimization-intro.html
 http://zh.gluon.ai/chapter_optimization/adagrad.html
 
 https://zhuanlan.zhihu.com/p/29920135
+
+https://cloud.tencent.com/developer/article/1057062
+
+https://kknews.cc/zh-tw/other/pg4xeq2.html
+
+https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8B%95%E5%B9%B3%E5%9D%87
+
+
 
 
 
