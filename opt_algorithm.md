@@ -174,7 +174,10 @@ trainer = gluon.Trainer(net.collect_params(), 'adagrad',{'learning_rate': lr})
 因為RMSProp算法的狀態變量 st 是對平方項 gt⊙gt 的指數加權移動平均，所以可以看作是最近 1/(1−γ) 個時間步的小批量隨機梯度平方項的加權平均。如此一來，自變量每個元素的學習率在迭代過程中就不再一直降低（或不變）。
 
 
-
+```Python
+trainer = gluon.Trainer(net.collect_params(), 'rmsprop', {'learning_rate': lr, 'gamma1': gamma})
+							
+```
 
 # 原文出處
 
