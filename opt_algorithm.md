@@ -136,7 +136,42 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr, 'momen
 ```
 
 
+# AdaGrad
 
+adagrad 與 momentum 都是為了降低對於超參數學習率的依賴，如果說momentum對於平緩梯度的學習率增長速度較陡梯度快，那麼adagrad就與其相反，對於平緩梯度的學習率降低速度較陡梯度慢。
+
+公式如下:
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/adagrad_formula.png)
+
+ϵ 是為了維持數值穩定性而添加的常數
+
+由於 st 一直在累加按元素平方的梯度，自變量中每個元素的學習率在迭代過程中一直在降低（或不變）。所以，當學習率在迭代早期降得較快且當前解依然不佳時，AdaGrad算法在迭代後期由於學習率過小，可能較難找到一個有用的解。
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/adagrad_show.jpg)
+
+在參數空間更為平緩的方向，會取得更大的進步（因為平緩，所以歷史梯度平方和較小，對應學習下降的幅度較小），並且能夠使得陡峭的方向變得平緩，從而加快訓練速度。
+
+
+```Python
+trainer = gluon.Trainer(net.collect_params(), 'adagrad',{'learning_rate': lr})
+							
+```
+
+
+# RMSProp
+
+我們在“AdaGrad算法”一節中提到，因為調整學習率時分母上的變量 st 一直在累加按元素平方的小批量隨機梯度，所以目標函數自變量每個元素的學習率在迭代過程中一直在降低（或不變）。
+
+因此，當學習率在迭代早期降得較快且當前解依然不佳時，AdaGrad算法在迭代後期由於學習率過小，可能較難找到一個有用的解。為了解決這一問題，RMSProp算法對AdaGrad算法做了一點小小的修改。
+
+公式如下:
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/rmsprop_formula.png)
+
+ϵ 是為了維持數值穩定性而添加的常數
+
+因為RMSProp算法的狀態變量 st 是對平方項 gt⊙gt 的指數加權移動平均，所以可以看作是最近 1/(1−γ) 個時間步的小批量隨機梯度平方項的加權平均。如此一來，自變量每個元素的學習率在迭代過程中就不再一直降低（或不變）。
 
 
 
@@ -144,6 +179,12 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd',{'learning_rate': lr, 'momen
 # 原文出處
 
 http://zh.gluon.ai/chapter_optimization/optimization-intro.html
+
+http://zh.gluon.ai/chapter_optimization/adagrad.html
+
+https://zhuanlan.zhihu.com/p/29920135
+
+
 
 
 
