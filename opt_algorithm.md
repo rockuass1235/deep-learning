@@ -226,7 +226,7 @@ trainer = gluon.Trainer(net.collect_params(), 'rmsprop', {'learning_rate': lr, '
 
 ### a = 0.1 進行EWMA
 
-![image](https://github.com/rockuass1235/deep-learning/blob/master/images/ewma_smaple.jpg)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/ewma_sample.jpg)
 
 
 實際上 a 值也有一些實際的意義， 從數學上可以得知(1-1/n)^n = exp(-1) = 0.3679。假設exxp(-1)是很小的值，代表加權指數平均到某一定值以後可以視同0忽略不計
