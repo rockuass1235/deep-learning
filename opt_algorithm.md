@@ -192,13 +192,16 @@ trainer = gluon.Trainer(net.collect_params(), 'rmsprop', {'learning_rate': lr, '
 
 同樣在CS231n 課程中，Adam 算法也推薦作為默認的優化算法。
 
+Adam算法是將Momentum算法和RMSProp算法結合起來使用的一種算法，一種可以使用類似於物理中的動量來累積梯度，另一種可以使得收斂速度更快同時使得波動的幅度更小。那麼講兩種算法結合起來所取得的表現一定會更好。
 
 公式如下:
 
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/adam_formula.png)
 
 
-這裡對1階導數與2階導數都進行了指數加權移動平均，那什麼是指數加權平均?
+這裡對1階導數與2階導數都進行了指數加權移動平均
+
+### 那什麼是指數加權平均?
 
 
 指數移動平均（英語：exponential moving average，EMA或EWMA）是以指數式遞減加權的移動平均。各數值的加權影響力隨時間而指數式遞減，越近期的數據加權影響力越重，但較舊的數據也給予一定的加權值。
@@ -231,7 +234,16 @@ trainer = gluon.Trainer(net.collect_params(), 'rmsprop', {'learning_rate': lr, '
 
 實際上 a 值也有一些實際的意義， 從數學上可以得知(1-1/n)^n = exp(-1) = 0.3679。假設exxp(-1)是很小的值，代表加權指數平均到某一定值以後可以視同0忽略不計
 
-一般這個值 = 1/(1-a)， 假設a = 0.9，得到的值其實就是10輪的加權指數平均，離當前時間越近的值獲得的權重越大
+一般這個值 = 1/a， 假設a = 0.1，得到的值其實就是10輪的加權指數平均，離當前時間越近的值獲得的權重越大
+
+注意: adagrad 變數a位置與ewma公式相反(β = 1-a)
+
+
+```Python
+
+ trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': lr})
+							
+```
 
 
 
