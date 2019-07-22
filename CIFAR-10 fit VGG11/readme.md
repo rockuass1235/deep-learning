@@ -59,11 +59,91 @@ def VGG(out,conv_arch = [(1, 64), (1, 128), (2, 256), (2, 512), (2, 512)]):
 
 ```
 
+# 使用方法
+
+由於VGG的權重比起AlexNet來說簡直是爆炸性成長，訓練時間也是相當漫長，所以我改用gpu(GTX1070)進行運算
+
+### cpu運算:
+
+epoch: 1, loss: 2.301002, time: 1709.729176 sec
+
+### gpu運算
+
+epoch: 1, loss: 1.943757, time: 13.645320 sec
 
 
 
+```Python
+
+def train(epochs, batch_size, net, loss, trainer, train_data, transformer, ctx):
+    train_iter = gdata.DataLoader(train_data.transform_first(transformer), batch_size=batch_size, shuffle=True)
+   
+    
+    for e in range(epochs):
+
+        total_loss = 0
+        start = time.time()
+        for x, y in train_iter:
+		
+			# 將資料copy to gpu
+            x = x.as_in_context(ctx)
+            y = y.as_in_context(ctx).astype('float32')
+                
+            
+            with autograd.record():
+                yhat = net(x)
+                l = loss(yhat, y)
+            l.backward()
+            trainer.step(batch_size)
+            total_loss += l.sum().asscalar()
+
+        print('epoch: %d, loss: %f, time: %f sec' % (e + 1, total_loss / len(train_data), time.time() - start))
 
 
+
+train_data = gdata.vision.CIFAR10(train=True)
+test_data = gdata.vision.CIFAR10(train=False)
+
+
+transformer = gdata.vision.transforms.ToTensor()
+net = VGG(10)
+net.initialize(init.Xavier())
+
+epochs = 100
+lr = 0.01
+wd = 0.001
+batch_size = 256
+loss = gloss.SoftmaxCrossEntropyLoss()
+mom = 0.9
+
+
+
+# ctx的改變需要在初始化trainer之前 否則訓練時trainer得到的權重位置依然在cpu上!!!!
+
+ctx = mx.gpu()
+net.collect_params().reset_ctx(ctx)
+net.hybridize()
+trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': lr})
+
+
+net.load_parameters('TinyVGG11.params')
+train(epochs, batch_size, net, loss, trainer, train_data,transformer, ctx)
+net.save_parameters('TinyVGG11.params')
+
+
+
+test_iter = gdata.DataLoader(test_data.transform_first(transformer), batch_size = 256, shuffle = True)
+total = 0
+net.collect_params().reset_ctx(mx.cpu())
+for x, y in test_iter:
+
+    y = y.astype('float32')
+    yhat = net(x)
+    total += (yhat.argmax(axis=1) == y).sum().asscalar()
+print('acc: ', total/len(test_data))
+
+
+```
 
 
 
@@ -89,5 +169,7 @@ def VGG(out,conv_arch = [(1, 64), (1, 128), (2, 256), (2, 512), (2, 512)]):
 
 
 # 原文出處
+
+http://zh.gluon.ai/chapter_convolutional-neural-networks/vgg.html
 
 https://medium.com/%E9%9B%9E%E9%9B%9E%E8%88%87%E5%85%94%E5%85%94%E7%9A%84%E5%B7%A5%E7%A8%8B%E4%B8%96%E7%95%8C/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-ml-note-cnn%E6%BC%94%E5%8C%96%E5%8F%B2-alexnet-vgg-inception-resnet-keras-coding-668f74879306
