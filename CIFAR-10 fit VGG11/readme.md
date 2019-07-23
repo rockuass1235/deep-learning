@@ -146,16 +146,18 @@ print('acc: ', total/len(test_data))
 ```
 
 
+# 結果
 
 
+epochs = 200
+lr = 0.01
+wd = 0.001
+batch_size = 256
+loss = gloss.SoftmaxCrossEntropyLoss()
+mom = 0.9
 
 
-
-
-
-
-
-
+acc:  0.7405
 
 
 
