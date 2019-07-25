@@ -23,7 +23,7 @@
 
 從未處理的D、E框中繼續選一個得分最高的，重複上述過程。最後保留B、E框
 
-![image](https://github.com/rockuass1235/deep-learning/blob/master/images/nms_round1.jpg)
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/nms_round2.jpg)
 
 
 
