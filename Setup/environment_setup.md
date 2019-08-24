@@ -1,8 +1,6 @@
 
 
-# 各種framework 支援模式
 
-mxnet 同時支援命令式&聲明式，具有高度彈性的設計模式可以混合使用
 
 # GPU Computing配置 (Ubuntu 18.04)
 
