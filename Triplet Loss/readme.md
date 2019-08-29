@@ -52,7 +52,7 @@ Triplet loss最初是在FaceNet: A Unified Embedding for Face Recognition and Cl
 * n： negative,與a是不同類別的樣本
 
 
-![](https://github.com/rockuass1235/deep-learning/blob/master/images/triplet_loss.jpg)
+![](https://github.com/rockuass1235/deep-learning/blob/master/images/triplet_loss.png)
 
 
 
