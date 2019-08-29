@@ -56,6 +56,268 @@ Triplet loss最初是在FaceNet: A Unified Embedding for Face Recognition and Cl
 
 
 
+## 公式:
+
+按照特徵向量的特性，一張影像所擷取的特徵向量應該要與其他相同內容的影像取得較為接近的特徵向量，與自己不相符的的影像所擷取的特徵向量盡可能差異化。
+
+透過這樣的關係我們可以歸納出以下的公式，其中的margin是閥值，margin越大 distance(a,p)-distance(a, n)就要越小。 也就是說 distance(a,p) << distance(a, n)
+
+
+Loss = max( distance(a, p) - distance(a, n) + margin, 0)
+	
+![](https://github.com/rockuass1235/deep-learning/blob/master/images/triplet_loss_formula.png)
+
+所以最終目標就是拉近 (a, p)之間的距離， 拉遠(a, n)之間的距離
+
+
+![](https://github.com/rockuass1235/deep-learning/blob/master/images/triplets_data.png)
+
+訓練上資料有3種狀況:
+
+
+* easy triplets: distance(a, p) + margin <  distance(a, n)
+
+* semi-hard triplets: distance(a, p) <  distance(a, n) < distance(a, p) + margin
+
+* hard triplets: distance(a, p) >  distance(a, n)
+
+原則上除了easy triplets的情況不進行訓練， 所以Loss設為0
+
+
+
+
+# 實作 Triplet 數據集
+
+
+```Python
+
+class TripletDataset(gdata.Dataset):
+
+    def __init__(self, X, Y):
+
+        if not isinstance(X, nd.NDArray):
+            raise Exception('type of X is not nd.NDArray')
+        if not isinstance(Y, nd.NDArray):
+            raise Exception('type of Y is not nd.NDArray')
+
+        self.X = X
+        self.Y = Y
+        self.classes = np.unique(self.Y.asnumpy())
+        self.cls_num = len(self.classes)
+        self.groups = tuple(
+            np.where(Y.asnumpy() == cls)[0] for cls in self.classes)  # np.where return 座標(tuple)故取idx[0]
+        self.pairs = self._get_pairs()
+
+    def __getitem__(self, idx):
+
+        idx = self.pairs[idx]
+
+        return self.X[idx][0], self.X[idx][1], self.X[idx][2]
+
+    def _get_pairs(self):
+
+        pairs = []
+        for i, indeces in enumerate(self.groups):
+
+            np.random.shuffle(indeces)
+
+            for j in range(len(indeces) - 1):
+                piv = indeces[j]
+                pos = indeces[j + 1]
+
+                neg = i + random.randint(1, self.cls_num - 1)
+                neg %= self.cls_num
+                neg_idx = random.randint(0, len(self.groups[neg]) - 1)  # a <= random <= b
+                neg = self.groups[neg][neg_idx]
+
+                pairs.append(nd.array([piv, pos, neg]))
+
+        return pairs
+
+    def __len__(self):
+
+        return len(self.pairs)
+
+    def transform_all(self, fn, lazy=True):
+
+        return self.transform(_TransformAllClosure(fn), lazy)
+		
+
+```
+
+![](https://github.com/rockuass1235/deep-learning/blob/master/images/triplet_face.png)
+
+
+# Model
+
+使用ResNet18 v2架構抽取特徵映射至128D
+
+```
+ResNetV2(
+  (features): HybridSequential(
+    (0): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=True, use_global_stats=False, in_channels=3)
+    (1): Conv2D(3 -> 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+    (2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+    (3): Activation(relu)
+    (4): MaxPool2D(size=(3, 3), stride=(2, 2), padding=(1, 1), ceil_mode=False)
+    (5): HybridSequential(
+      (0): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+        (conv1): Conv2D(64 -> 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+        (conv2): Conv2D(64 -> 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      )
+      (1): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+        (conv1): Conv2D(64 -> 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+        (conv2): Conv2D(64 -> 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      )
+    )
+    (6): HybridSequential(
+      (0): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=64)
+        (conv1): Conv2D(64 -> 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=128)
+        (conv2): Conv2D(128 -> 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (downsample): Conv2D(64 -> 128, kernel_size=(1, 1), stride=(2, 2), bias=False)
+      )
+      (1): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=128)
+        (conv1): Conv2D(128 -> 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=128)
+        (conv2): Conv2D(128 -> 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      )
+    )
+    (7): HybridSequential(
+      (0): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=128)
+        (conv1): Conv2D(128 -> 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=256)
+        (conv2): Conv2D(256 -> 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (downsample): Conv2D(128 -> 256, kernel_size=(1, 1), stride=(2, 2), bias=False)
+      )
+      (1): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=256)
+        (conv1): Conv2D(256 -> 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=256)
+        (conv2): Conv2D(256 -> 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      )
+    )
+    (8): HybridSequential(
+      (0): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=256)
+        (conv1): Conv2D(256 -> 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=512)
+        (conv2): Conv2D(512 -> 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (downsample): Conv2D(256 -> 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+      )
+      (1): BasicBlockV2(
+        (bn1): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=512)
+        (conv1): Conv2D(512 -> 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=512)
+        (conv2): Conv2D(512 -> 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      )
+    )
+    (9): BatchNorm(axis=1, eps=1e-05, momentum=0.9, fix_gamma=False, use_global_stats=False, in_channels=512)
+    (10): Activation(relu)
+    (11): GlobalAvgPool2D(size=(1, 1), stride=(1, 1), padding=(0, 0), ceil_mode=True)
+    (12): Flatten
+  )
+  (output): Dense(512 -> 128, Activation(sigmoid))
+)
+```
+
+## 評估函數
+
+```Python
+
+def evaluate_net(model, test_iter, ctx):
+    
+    loss = gluon.loss.TripletLoss(margin=0)
+    sum_correct = 0
+    sum_all = 0
+    rate = 0.0
+    
+    for a, b, c in test_iter:
+        
+        a = a.as_in_context(ctx)
+        b = b.as_in_context(ctx)
+        c = c.as_in_context(ctx)
+        
+            
+        anchor = net(a)
+        positive = net(b)
+        negative = net(c)
+                
+        l = loss(anchor, positive, negative)
+
+        l = l.asnumpy()
+        
+        n_all = l.shape[0]
+        #print(np.where(l == 0, 1, 0))
+        n_correct = np.sum(np.where(l == 0, 1, 0))
+
+        sum_correct += n_correct
+        sum_all += n_all
+        rate = sum_correct/sum_all
+    
+    print('acccuracy: %f (%s / %s)' % (rate, sum_correct, sum_all))
+    return rate            
+	
+```
+
+## 分類函數 K-最近鄰
+
+```
+def nearestclass(x, y, threshold):
+
+    d = y[:, 1:] - x
+    
+    d = d**2
+    d = d**0.5
+    
+    d = d.sum(axis = 1)
+    print(d)
+    idx = nd.argmin(d, axis = 0)
+    
+    
+    print(idx)
+    if d[idx] > threshold:
+        return '???'
+    
+    return y[idx, 0]
+```
+
+
+# 結果
+
+分類結果很不好，大概是樣本數過少(300筆)
+
+用MNIST測試(60000筆) 結果倒是挺不錯的
+
+```
+
+epochs: 41, loss: 0.000340, time: 7.840783 sec
+acccuracy: 0.612903 (152 / 248)
+epochs: 42, loss: 0.000321, time: 7.912023 sec
+acccuracy: 0.608871 (151 / 248)
+epochs: 43, loss: 0.000309, time: 7.747280 sec
+acccuracy: 0.600806 (149 / 248)
+epochs: 44, loss: 0.000281, time: 7.766007 sec
+acccuracy: 0.600806 (149 / 248)
+epochs: 45, loss: 0.000248, time: 7.674172 sec
+acccuracy: 0.600806 (149 / 248)
+
+
+
+```
+
+
+	
+
+
+
 # 資料來源
 
 
