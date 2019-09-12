@@ -6,10 +6,10 @@ import random
 import numpy as np
 import dlib
 import ssd as mod
+import _pickle as pk
 
-
-def fr_dataset(path):
-    return FaceDataset(path)
+def fr_dataset(file_name, imgs_path):
+    return FaceDataset(file_name, imgs_path)
 
 
 def triplet_dataset(path, threshold=0.5):
@@ -126,40 +126,24 @@ def read_img(path):
 
 class FaceDataset(gdata.Dataset):
 
-    def __init__(self, path, get_data_first=False):
-        self.ls = read_img(path)
-        self._first = get_data_first
+    def __init__(self, file_name, imgs_path):
 
-        self.Y = nd.zeros(shape=(len(self), 10, 5))
+        self.path = imgs_path
+        with open(file_name+'.lst', 'rb') as f:
+            self.lst = pk.load(f)
+        with open(file_name+'.rec', 'rb') as f:
+            self.labels = pk.load(f)
 
-        for i in range(self.__len__()):
-            y = self.__get_label(i)
-            self.Y[i] = y
+        self.labels = nd.array(self.labels)
+
 
     def __len__(self):
-        return len(self.ls)
-
-    def __get_label(self, idx):
-
-        detector = dlib.cnn_face_detection_model_v1('mmod_human_face_detector.dat')
-        X = image.imread(self.ls[idx])
-        X = fix(X).astype('uint8')
-        h, w, _ = X.shape
-
-        # 資料的ground truth數量不一同無法使用batch size trainning，
-        # 可補[0,0,0,0,0] 將其大小擴展為一致，MultiboxTarget計算時會自動忽略不影響輸出
-        dets = detector(X.asnumpy(), 1)
-        Y = nd.zeros(shape=(10, 5))
-        for j, det in enumerate(dets):
-            x1, y1, x2, y2 = det.rect.left(), det.rect.top(), det.rect.right(), det.rect.bottom()
-            Y[j] = nd.array([0, x1 / w, y1 / h, x2 / w, y2 / h])
-        return Y
+        return len(self.lst)
 
     def __getitem__(self, idx):
 
-        img = image.imread(self.ls[idx])
-        img = fix(img)
-        return img, self.Y[idx]
+        img = image.imread(self.path + self.lst[idx])
+        return img, self.labels[idx]
 
 
 class _TransformAllClosure(object):

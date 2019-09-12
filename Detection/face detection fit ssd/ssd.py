@@ -47,14 +47,14 @@ class MyMod(nn.Block):
         self.classes = classes
         self.ctx = ctx
 
-        net = gluon.model_zoo.vision.resnet18_v2(pretrained=True).features
+        net = gluon.model_zoo.vision.mobilenet_v2_1_0(pretrained=True).features
 
-        self.net_0 = MyBlk(net[:5], classes, [0.8 / (2) ** 2.5], [0.5, 1, 2, 1.618, 1 / 1.618])
-        self.net_1 = MyBlk(net[5:6], classes, [0.8 / (2) ** 2], [0.5, 1, 2, 1.618, 1 / 1.618])
-        self.net_2 = MyBlk(net[6:7], classes, [0.8 / (2) ** 1.5], [0.5, 1, 2, 1.618, 1 / 1.618])
-        self.net_3 = MyBlk(net[7:8], classes, [0.8 / (2) ** 1], [0.5, 1, 2, 1.618, 1 / 1.618])
-        self.net_4 = MyBlk(net[8:9], classes, [0.8 / (2) ** 0.5], [0.5, 1, 2, 1.618, 1 / 1.618])
-        self.net_5 = MyBlk(net[9:12], classes, [0.8], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_0 = MyBlk(net[:4], classes, [0.8/(2**8.5), 0.8/(2**8)], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_1 = MyBlk(net[4:6], classes, [0.8/(2**7), 0.8/(2**6.5)], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_2 = MyBlk(net[6:9], classes, [0.8/(2**5.5), 0.8/(2**5)], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_3 = MyBlk(net[9:16], classes, [0.8/(2**4.5), 0.8/(2**4), 0.8/(2**3.5)], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_4 = MyBlk(net[16:23], classes, [0.8/(2**3), 0.8/(2**2.5), 0.8/(2**2)], [0.5, 1, 2, 1.618, 1 / 1.618])
+        self.net_5 = MyBlk(net[23], classes, [0.8/(2**1.5), 0.8/(2**0.5), 0.8/(2**0)], [0.5, 1, 2, 1.618, 1 / 1.618])
 
     def forward(self, x):
         anchors, cls_yhats, bbox_yhats = [], [], []
@@ -74,42 +74,3 @@ class MyMod(nn.Block):
             bbox_yhats.append(bbox_yhat)
 
         return nd.concat(*anchors, dim=1), nd.concat(*cls_yhats, dim=1), nd.concat(*bbox_yhats, dim=1)
-
-    def get_bboxes(self, X):
-
-        anchors, cls_yhat, bbox_yhat = self(X)
-        cls_yhat = cls_yhat.softmax().transpose((0, 2, 1))
-        out = contrib.nd.MultiBoxDetection(cls_yhat, bbox_yhat.flatten(), anchors)
-        bboxes = []
-
-        for i, img in enumerate(out):
-            idx = img[:, 0] > -1
-            idx = np.where(idx.asnumpy() >= 0.5)
-            bboxes.append(img[idx].as_in_context(mx.cpu()))
-
-        return bboxes
-
-    def reset_ctx(self, ctx):
-        
-        self.ctx = ctx
-        self.collect_params().reset_ctx(self.ctx)
-
-
-    def predict(self, x, threshold=0.5):
-
-        x = x.as_in_context(self.ctx)
-        bboxes = self.get_bboxes(x)
-        Y = nd.zeros(shape=(len(bboxes), 6))
-
-        for i, gt in enumerate(bboxes):
-
-            idx = gt[:, 1] >= threshold
-            idx = np.where(idx.asnumpy() >= 0.5)[0]
-            if len(idx) <= 0:
-                continue
-
-            idx = idx[0]
-            Y[i] = gt[idx]
-        return Y
-
-
