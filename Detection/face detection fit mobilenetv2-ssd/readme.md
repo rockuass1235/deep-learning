@@ -371,7 +371,7 @@ class MyMod(nn.Block):
 ```
 
 
-#結果
+# 結果
 
 測試訓練結果:
 
@@ -389,6 +389,21 @@ epoch: 72, acc: 0.999381, mae loss: 0.000657, time: 179.830 sec
 
 ![image](https://github.com/rockuass1235/deep-learning/blob/master/images/mobilenet_sample1.png)
 
+修正修測試結果:
+
+![image](https://github.com/rockuass1235/deep-learning/blob/master/images/mobilenet_sample2.png)
+
+
+# 結論
+
+以檔案大小來說，mobilenet的模型大小約19mb， dlib的face detector 只有713k，只有mobilenet 的 1/25
+
+但是實際運行時間卻比dlib快， 不管在gpu還是cpu上
+
+MobileNet { cpu: 1.80 fps, gpu: 72.99 fps}
+dlib      { cpu: 1.80 fps, gpu: 1.80 fps}
+
+以上fps含顯示影像動作
 
 
 # 資料來源
